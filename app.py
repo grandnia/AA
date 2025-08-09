@@ -1,22 +1,23 @@
+coba di app.py syntaxnya kayak gini
+
 import streamlit as st
 import pandas as pd
 import cloudpickle
-import os
-
-# Import semua class yang diperlukan di pipeline
-from sklearn.pipeline import Pipeline
-from sklearn.preprocessing import StandardScaler, OneHotEncoder
-from sklearn.compose import ColumnTransformer
-from sklearn.ensemble import RandomForestClassifier
+import joblib
 
 st.title("Prediksi Profit Menu Restoran")
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-pipeline_path = os.path.join(BASE_DIR, "pipeline_rfnew.pkl")
+pipeline_path =  "pipeline_rfnew.pkl"
+encoder_path = "target_encoder.pkl"
 
-with open(pipeline_path, "rb") as f:
+# Load pipeline
+with open(pipeline_path, 'rb') as f:
     pipeline = cloudpickle.load(f)
 
+# Load label encoder (jika diperlukan)
+label_encoder = joblib.load(encoder_path)
+
+# Input user
 menu_item = st.text_input('Nama Menu', 'Nasi Goreng')
 restaurant_id = st.text_input('ID Restoran', 'R001')
 price = st.number_input('Harga Jual per Produk (Rp)', min_value=0, value=25000)
