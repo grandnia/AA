@@ -1,18 +1,17 @@
 import streamlit as st
 import pandas as pd
 import cloudpickle
-import joblib
 import os
 
-st.title("Prediksi Profit Menu Restoran")
+# Import semua custom transformer/class jika ada, contoh:
+# from my_custom_module import CustomTransformer
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 pipeline_path = os.path.join(BASE_DIR, "pipeline_rfnew.pkl")
-encoder_path = os.path.join(BASE_DIR, "target_encoder.pkl")
 
-# Load pipeline
-with open(pipeline_path, 'rb') as f:
+with open(pipeline_path, "rb") as f:
     pipeline = cloudpickle.load(f)
+
 
 # Load label encoder (jika diperlukan)
 label_encoder = joblib.load(encoder_path)
@@ -38,3 +37,4 @@ if st.button('Prediksi Profit'):
         st.success(f"Estimasi profit: Rp {prediksi[0]:,.2f}")
     except Exception as e:
         st.error(f"Error saat prediksi: {e}")
+
