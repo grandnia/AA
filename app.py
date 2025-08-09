@@ -3,12 +3,18 @@ import pandas as pd
 import cloudpickle
 import os
 
+# Import semua class yang diperlukan di pipeline
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.compose import ColumnTransformer
+from sklearn.ensemble import RandomForestClassifier
+
 st.title("Prediksi Profit Menu Restoran")
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 pipeline_path = os.path.join(BASE_DIR, "pipeline_rfnew.pkl")
 
-with open(pipeline_path, 'rb') as f:
+with open(pipeline_path, "rb") as f:
     pipeline = cloudpickle.load(f)
 
 menu_item = st.text_input('Nama Menu', 'Nasi Goreng')
