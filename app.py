@@ -1,25 +1,22 @@
 import streamlit as st
 import pandas as pd
-import joblib
+import cloudpickle
+import os
 
 st.title("Prediksi Profit Menu Restoran")
 
-# Pakai path langsung tanpa __file__ (cocok buat notebook & Streamlit)
-pipeline_path = "pipeline_rfnew.pkl"
-encoder_path = "target_encoder.pkl"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+pipeline_path = os.path.join(BASE_DIR, "pipeline_rfnew.pkl")
 
-# Load model dan encoder
-pipeline = joblib.load(pipeline_path)
-label_encoder = joblib.load(encoder_path)
+with open(pipeline_path, 'rb') as f:
+    pipeline = cloudpickle.load(f)
 
-# Input user
 menu_item = st.text_input('Nama Menu', 'Nasi Goreng')
 restaurant_id = st.text_input('ID Restoran', 'R001')
 price = st.number_input('Harga Jual per Produk (Rp)', min_value=0, value=25000)
 menu_category = st.selectbox('Kategori Menu', ['Makanan', 'Minuman', 'Dessert'])
 ingredients = st.text_area('Bahan-bahan', 'Nasi, Telur, Ayam, Kecap')
 
-# Buat DataFrame input
 input_data = pd.DataFrame([{
     'MenuItem': menu_item,
     'RestaurantID': restaurant_id,
@@ -28,7 +25,6 @@ input_data = pd.DataFrame([{
     'Ingredients': ingredients
 }])
 
-# Prediksi ketika tombol ditekan
 if st.button('Prediksi Profit'):
     try:
         prediksi = pipeline.predict(input_data)
