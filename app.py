@@ -1,19 +1,15 @@
 import streamlit as st
 import pandas as pd
-import cloudpickle
-import os
+import joblib
 
-# Import semua custom transformer/class jika ada, contoh:
-# from my_custom_module import CustomTransformer
+st.title("Prediksi Profit Menu Restoran")
 
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-pipeline_path = os.path.join(BASE_DIR, "pipeline_rfnew.pkl")
+# Pakai path langsung tanpa __file__ (cocok buat notebook & Streamlit)
+pipeline_path = "pipeline_rfnew.pkl"
+encoder_path = "target_encoder.pkl"
 
-with open(pipeline_path, "rb") as f:
-    pipeline = cloudpickle.load(f)
-
-
-# Load label encoder (jika diperlukan)
+# Load model dan encoder
+pipeline = joblib.load(pipeline_path)
 label_encoder = joblib.load(encoder_path)
 
 # Input user
@@ -23,6 +19,7 @@ price = st.number_input('Harga Jual per Produk (Rp)', min_value=0, value=25000)
 menu_category = st.selectbox('Kategori Menu', ['Makanan', 'Minuman', 'Dessert'])
 ingredients = st.text_area('Bahan-bahan', 'Nasi, Telur, Ayam, Kecap')
 
+# Buat DataFrame input
 input_data = pd.DataFrame([{
     'MenuItem': menu_item,
     'RestaurantID': restaurant_id,
@@ -31,10 +28,10 @@ input_data = pd.DataFrame([{
     'Ingredients': ingredients
 }])
 
+# Prediksi ketika tombol ditekan
 if st.button('Prediksi Profit'):
     try:
         prediksi = pipeline.predict(input_data)
         st.success(f"Estimasi profit: Rp {prediksi[0]:,.2f}")
     except Exception as e:
         st.error(f"Error saat prediksi: {e}")
-
